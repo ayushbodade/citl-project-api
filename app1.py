@@ -14,7 +14,7 @@ from langchain.agents.agent_toolkits import (
 app = Flask(__name__)
 
 # Set API key for OpenAI Service
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = 'your_openai_api_key'
 
 # Create an instance of OpenAI LLM
 llm = OpenAI(temperature=0.1, verbose=True)
