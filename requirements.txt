@@ -1,7 +1,7 @@
-openai
-pycryptodome
-langchain
 flask
-pypdf
-tiktoken
+openai
 chromadb
+pypdf
+langchain
+tiktoken
+pycryptodome
