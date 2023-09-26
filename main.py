@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 import os
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -17,6 +17,7 @@ app = Flask(__name__)
 
 # Set API key for OpenAI Service
 os.environ['OPENAI_API_KEY'] = 'yourkey'
+app.secret_key='yourkey'
 
 # Create an instance of OpenAI LLM
 llm = OpenAI(temperature=0.1, verbose=True)
@@ -44,11 +45,20 @@ def success():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
             f.save(file_path)
             print("File Uploaded")
+
+            # Store the file path in the session
+            session['file_path'] = file_path
+
             return render_template("index.html", name=f.filename)
         
 
 @app.route('/ask', methods=['POST'])
 def ask_question():
+        # Get the file path from the session
+    file_path = session.get('file_path')
+
+    if file_path is None:
+        return jsonify({'response': 'Please upload a file first.'})
     # Process the uploaded file with Langchain (similar to your previous code)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], request.form.get('file_name'))
     print("File Path:", file_path)
