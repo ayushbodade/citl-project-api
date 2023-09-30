@@ -17,7 +17,6 @@ app = Flask(__name__)
 
 # Set API key for OpenAI Service
 os.environ['OPENAI_API_KEY'] = 'yourkey'
-app.secret_key='yourkey'
 
 # Create an instance of OpenAI LLM
 llm = OpenAI(temperature=0.1, verbose=True)
