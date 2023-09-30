@@ -24,32 +24,33 @@ llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
 
 
-# Define the directory where uploaded files will be stored
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = './uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/')
-def main():
-    return render_template("index.html")
+# Ensure the UPLOAD_FOLDER exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @app.route('/upload', methods=['POST'])
-def success():
-    if request.method == 'POST':
-        f = request.files['file']
-        if f:
-            # Ensure the 'uploads' directory exists
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
+def upload_file():
+    # Check if the POST request has the file part
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
 
-            # Save the uploaded file to the 'uploads' directory
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
-            f.save(file_path)
-            print("File Uploaded")
+    file = request.files['file']
 
-            # Store the file path in the session
-            session['file_path'] = file_path
+    # If the user does not select a file, the browser submits an empty file without a filename
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
 
-            return render_template("index.html", name=f.filename)
+    # Check if the file has an allowed extension (e.g., PDF)
+    allowed_extensions = {'pdf'}
+    if '.' not in file.filename or file.filename.rsplit('.', 1)[1].lower() not in allowed_extensions:
+        return jsonify({'error': 'Invalid file type. Allowed types: pdf'}), 400
+
+    # Save the file to the UPLOAD_FOLDER
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
+    return jsonify({'message': 'File uploaded successfully'}), 200
         
 
 @app.route('/ask', methods=['POST'])
