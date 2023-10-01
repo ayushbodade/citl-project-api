@@ -1,45 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload and Question</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask GPT Main Page</title>
 </head>
 <body>
-    <h1>Welcome to the Upload and Question App</h1>
+    <h1>Welcome to Flask GPT Main Page</h1>
     
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".pdf">
-        <input type="submit" value="Upload PDF">
-    </form>
-
-    {% if name %}
-    <p>File "{{ name }}" uploaded successfully.</p>
-    <form action="#" method="POST" id="question-form">
-        <input type="hidden" name="file_name" value="{{ name }}">
-        <!-- Add a hidden input field for the file path -->
-        <input type="hidden" name="file_path" value="{{ session.get('file_path') }}">
-        <label for="prompt">Enter your question:</label>
-        <input type="text" name="prompt" id="prompt" required>
-        <input type="submit" value="Ask">
-    </form>
+    <!-- Add your content here -->
     
-    <div id="response-div"></div>
-    <script>
-        $(document).ready(function() {
-            $("#question-form").submit(function(e) {
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: "/ask",
-                    data: $("#question-form").serialize(),
-                    success: function(data) {
-                        $("#response-div").html("<p>Response:</p><pre>" + data.response + "</pre>");
-                        document.getElementById("prompt").value = ""; // Clear the input field
-                    }
-                });
-            });
-        });
-    </script>
-    {% endif %}
+    <form action="/gpt-banker" method="post">
+        <button type="submit" name="gpt-button">GPT BANKER</button>
+    </form>
+    <form action="/news" method="post">
+        <button type="submit" name="news-button">NEWS</button>
+    </form>
+    <form action="/finance" method="post">
+        <button type="submit" name="news-button">FINANCE</button>
+    </form>
 </body>
 </html>

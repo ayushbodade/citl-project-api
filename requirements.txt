@@ -5,3 +5,5 @@ pypdf
 langchain
 tiktoken
 pycryptodome
+newsapi-python
+yfinance
