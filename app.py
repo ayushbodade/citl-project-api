@@ -1,29 +1,55 @@
-import streamlit as st
 import requests
+from flask import Flask, jsonify, request, render_template
 
-st.header('GPT Banker', divider='rainbow')
-st.header('_Ask questions about_ :blue[Annual Reports] :sunglasses:')
+headers_search_anime = {
+    "X-RapidAPI-Key": "yourkey",
+    "X-RapidAPI-Host": "myanimelist.p.rapidapi.com"
+}
 
-import streamlit as st
-import requests
+headers_get_translations = {
+	"content-type": "application/x-www-form-urlencoded",
+	"Accept-Encoding": "application/gzip",
+	"X-RapidAPI-Key": "yourkey",
+	"X-RapidAPI-Host": "google-translate1.p.rapidapi.com"
+}
 
-# Streamlit UI
-st.title("PDF Uploader")
+url_get_translations = "https://google-translate1.p.rapidapi.com/language/translate/v2"
 
-uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+app = Flask(__name__)
 
-if uploaded_file:
-    st.write("File uploaded successfully!")
+@app.route('/')
+def home():
+    return render_template('anime_search.html')
 
-    # Display file details
-    file_details = {"Filename": uploaded_file.name, "FileType": uploaded_file.type, "FileSize": uploaded_file.size}
-    st.write(file_details)
+@app.route('/anime-search', methods=['GET'])
+def search_anime():
+    anime_name = request.args.get('name')
+    pref_lang = str(request.args.get('language'))
+    print("Payload : ",anime_name, pref_lang)
+    url = f"https://myanimelist.p.rapidapi.com/anime/search/{anime_name}"
+    response = requests.get(url, headers=headers_search_anime).json()
+    print("Anime Search Response : ",response)
+    anime_data = response[0]  # Assuming you want the first result
+    title = anime_data.get("title", "")
+    description = str(anime_data.get("description", ""))
+    picture_url = anime_data.get("picture_url", "")
+    myanimelist_url = anime_data.get("myanimelist_url", "")
 
-    # Button to upload the file
-    if st.button("Upload"):
-        # POST request to Flask server
-        files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
-        response = requests.post("http://127.0.0.1:5000/upload", files=files)
+    payload = {
+	    "q": description,
+	    "target": pref_lang
+    }
+    response = requests.post(url_get_translations, data=payload, headers=headers_get_translations).json()
+    print("Text Translation Response : ",response)
+    description = response.get('data',{}).get('translations',[])[0].get('translatedText',"")
+    print("Text After processing : ",description)
+    return render_template(
+        'anime_search.html',
+        title=title,
+        description=description,
+        picture_url=picture_url,
+        myanimelist_url=myanimelist_url
+    )
 
-        # Display server response
-        st.write(response.json())
+if __name__ == '__main__':
+    app.run(debug=True)
