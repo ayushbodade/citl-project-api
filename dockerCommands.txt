@@ -1,0 +1,12 @@
+docker build -t reggin/citl-gpt-banker:latest .
+
+docker push reggin/citl-gpt-banker:latest
+
+docker pull reggin/citl-gpt-banker:latest
+    // OUTPUT
+    latest: Pulling from reggin/citl-gpt-banker
+    Digest: sha256:5c66e2173a20101f7f95356899efd6c4b8e17271f77a9861da562ede4f746844
+    Status: Image is up to date for reggin/citl-gpt-banker:latest
+    docker.io/reggin/citl-gpt-banker:latest
+
+docker run -it reggin/citl-gpt-banker:latest

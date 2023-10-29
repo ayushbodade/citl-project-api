@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv 
 from flask import Flask, render_template, request, session, jsonify
 import yfinance as yf
 from newsapi import NewsApiClient
@@ -12,16 +13,13 @@ from langchain.agents.agent_toolkits import (
     VectorStoreInfo,
 )
 
+load_dotenv()
+
 app = Flask(__name__)
+app.secret_key = "mykey"
 
-# Set API key for OpenAI Service
 
-app.secret_key = ""
-os.environ["OPENAI_API_KEY"] = app.secret_key
 
-# Create an instance of OpenAI LLM
-llm = OpenAI(temperature=0.1, verbose=True)
-embeddings = OpenAIEmbeddings()
 
 
 # Define the directory where uploaded files will be stored
@@ -35,7 +33,9 @@ def main():
 
 
 ####################################### NEWS API ####################################################
-newsapi = NewsApiClient(api_key="")
+
+news_api_key = os.getenv("NEWS_API_KEY")
+newsapi = NewsApiClient(api_key=news_api_key)
 
 
 @app.route("/news", methods=["POST"])
@@ -73,6 +73,10 @@ def index():
 
 ######################################## GPT BANKER API ###############################################
 
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+llm = OpenAI(temperature=0.1, verbose=True)
+embeddings = OpenAIEmbeddings()
 
 @app.route("/gpt-banker", methods=["POST"])
 def render_gpt_banker():
@@ -161,4 +165,4 @@ def display_history():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
