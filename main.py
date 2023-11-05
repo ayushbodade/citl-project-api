@@ -35,6 +35,7 @@ def main():
 ####################################### NEWS API ####################################################
 
 news_api_key = os.getenv("NEWS_API_KEY")
+news_api_key = '3cce8bdf055a46ebb1028caa908bc2c5'
 newsapi = NewsApiClient(api_key=news_api_key)
 
 
@@ -74,6 +75,7 @@ def index():
 ######################################## GPT BANKER API ###############################################
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = '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'
 
 llm = OpenAI(temperature=0.1, verbose=True)
 embeddings = OpenAIEmbeddings()
